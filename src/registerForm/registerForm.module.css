@@ -1,0 +1,45 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+  }
+  
+  .title {
+    margin-left: 17px;
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #333;
+  }
+
+  
+  .button {
+    margin-left: 20px;
+    background-color: #4CAF50;
+    color: white;
+    width: 200px;
+    border: none;
+    cursor: pointer;
+
+  }
+  
+  .button:hover {
+    background-color: #45a049;
+  }
+  
+  form {
+    width: 300px;
+  }
+  
+  input[type="text"], input[type="password"] {
+    padding: 10px;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+  }
+
+  

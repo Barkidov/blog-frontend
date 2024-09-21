@@ -1,6 +1,7 @@
 import { FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import style from './registerForm.module.css'; // Импорт модульных стилей
 
 const RegisterForm: React.FC = () => {
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ const RegisterForm: React.FC = () => {
 
   const handleRegister = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     // Простая валидация
     if (login.length <= 4) {
       alert("Логин должен содержать 4 и более символов");
@@ -24,9 +25,8 @@ const RegisterForm: React.FC = () => {
       alert("Пароль должен содержать 4 и более символов");
       return;
     }
-    
+
     try {
-      // Запрос к API с использованием axios
       const response = await axios.post("http://localhost:5000/api/auth/register", {
         login,
         password
@@ -36,7 +36,6 @@ const RegisterForm: React.FC = () => {
         }
       });
 
-      // Проверка успешного ответа
       if (response.status === 200 || response.status === 201) {
         navigate("/");
       } else {
@@ -46,26 +45,24 @@ const RegisterForm: React.FC = () => {
       console.error('Error during registration:', err);
       alert("Ошибка регистрации");
     }
-    
+
     // Очистка формы
     setLogin('');
     setPassword('');
   };
 
   return (
-    <div>
-      <div>Регистрация аккаунта</div>
-      <div>
-        <div>Войдите в аккаунт если у вас он уже есть</div>
-        <button onClick={goToLoginForm}>Войти в аккаунт</button>
-      </div>
-      <form onSubmit={handleRegister}>
+    <div className={style.container}>
+      <div className={style.title}>Регистрация аккаунта</div>
+      <button className={style.button} onClick={goToLoginForm}>Войти в аккаунт</button>
+      <form className={style.form} onSubmit={handleRegister}>
         <div>
           <input
             type="text"
             value={login}
             onChange={(e) => setLogin(e.target.value)}
             placeholder="Введите логин"
+            className={style.input}
           />
         </div>
         <div>
@@ -74,12 +71,15 @@ const RegisterForm: React.FC = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Введите пароль"
+            className={style.input}
           />
         </div>
-        <button type="submit">Зарегистрироваться</button>
+        <button type="submit" >Зарегистрироваться</button>
       </form>
     </div>
   );
 };
 
 export default RegisterForm;
+
+

@@ -25,7 +25,7 @@ const LoginForm: React.FC = () => {
       });
 
       if (response.status === 200 || response.status === 201) {
-        localStorage.setItem("token", response.data.token);//Когда ты вызываешь localStorage.setItem("token", response.data.token);, ты говоришь браузеру: "Сохрани, пожалуйста, этот токен под именем 'token', чтобы я мог его использовать позже."
+        localStorage.setItem("token", response.data.token);
         navigate("/posts");
       } else {
         alert("Ошибка при входе");
@@ -36,14 +36,11 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <div>
-      <div>Войдите в аккаунт</div>
-      <div>Зарегистрируйстесь если у вас нет аккаунта</div>
-      <div>
-        <button onClick={goToRegisterForm}>Регистрация</button>
-      </div>
-      <form onSubmit={handleLogin}>
-        <div>
+    <div className={style.container}>
+      <div className={style.title}>Войдите в аккаунт</div>
+      <button className={style.button} onClick={goToRegisterForm}>Регистрация</button>
+      <form className={style.form} onSubmit={handleLogin}>
+        <div className={style.inputField}>
           <input
             type="text"
             value={login}
@@ -51,7 +48,7 @@ const LoginForm: React.FC = () => {
             placeholder="Введите логин"
           />
         </div>
-        <div>
+        <div className={style.inputField}>
           <input
             type="password"
             value={password}
