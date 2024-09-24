@@ -49,13 +49,13 @@ const LoginForm: React.FC = () => {
         {() => (
           <Form className={style.form}>
             <div>
-              <Field className={style.inputField} name="login" placeholder="Введите логин" />
+              <Field name="login" placeholder="Введите логин" />
             </div>
             <div>
-              <Field className={style.inputField}
+              <Field
                 name="password"
                 type="password"
-                placeholder="Введите логин"
+                placeholder="Введите пароль"
               />
             </div>
             <button type="submit">Войти</button>

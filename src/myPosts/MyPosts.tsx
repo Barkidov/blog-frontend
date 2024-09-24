@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import style from "./myPosts.module.css";
+import { useNavigate } from "react-router-dom";
 
 interface Post {
   _id: string;
@@ -11,31 +12,33 @@ interface Post {
 
 const MyPosts: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
-  const [content, setContent] = useState<string>("");
+  const [content, setContent] = useState<string>('');
   const [image, setImage] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/", { replace: true });
+      return;
+    }
+
     const fetchPosts = async () => {
       try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          throw new Error("Not found token");
-        }
-
         const response = await axios.get("http://localhost:5000/api/posts", {
           headers: {
             "x-auth-token": token,
           },
         });
-
         setPosts(response.data);
       } catch (err) {
         console.error(err);
       }
     };
     fetchPosts();
-  }, []);
+  }, [navigate]);
 
   const handleCreatePost = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,6 +74,12 @@ const MyPosts: React.FC = () => {
     }
   };
 
+  // Функция выхода
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/", { replace: true });
+  };
+
   const handleDeletePost = async (postId: string) => {
     try {
       const token = localStorage.getItem("token");
@@ -87,7 +96,12 @@ const MyPosts: React.FC = () => {
 
   return (
     <div className={style.container}>
-      <div className={style.title}>Мои посты</div>
+      <div className={style.main}>
+        <div className={style.title}>Мои посты</div>
+        <div>
+          <button onClick={handleLogout}>Выход</button>
+        </div>
+      </div>
       <form onSubmit={handleCreatePost}>
         <textarea
           value={content}
@@ -117,7 +131,13 @@ const MyPosts: React.FC = () => {
                 />
               )}
             </div>
-            <div>{post.createdAt}</div>
+            <div>
+              {`${new Date(post.createdAt).toLocaleDateString()}
+              ${new Date(post.createdAt).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}`}
+            </div>
             <button onClick={() => handleDeletePost(post._id)}>
               Удалить пост
             </button>

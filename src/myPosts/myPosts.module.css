@@ -3,6 +3,11 @@
     margin: 0 auto;
     padding: 20px;
   }
+
+  .main {
+    display: flex;
+    justify-content: space-between;
+  }
   
   .title {
     font-size: 2rem;
