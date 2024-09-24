@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import style from "./myPosts.module.css";
 
 interface Post {
@@ -13,6 +13,7 @@ const MyPosts: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [content, setContent] = useState<string>("");
   const [image, setImage] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -46,17 +47,25 @@ const MyPosts: React.FC = () => {
     }
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.post("http://localhost:5000/api/posts/create", formData, {
-        headers: {
-          'x-auth-token': token,
-          "Content-Type": 'multipart/form-data'
+      const token = localStorage.getItem("token");
+      const response = await axios.post(
+        "http://localhost:5000/api/posts/create",
+        formData,
+        {
+          headers: {
+            "x-auth-token": token,
+            "Content-Type": "multipart/form-data",
+          },
         }
-      });
+      );
 
       setPosts([response.data, ...posts]);
-      setContent('');
+      setContent("");
       setImage(null);
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     } catch (err) {
       console.error(err);
     }
@@ -64,17 +73,17 @@ const MyPosts: React.FC = () => {
 
   const handleDeletePost = async (postId: string) => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       await axios.delete(`http://localhost:5000/api/posts/${postId}`, {
         headers: {
-          'x-auth-token': token,
-        }
+          "x-auth-token": token,
+        },
       });
       setPosts(posts.filter((post) => post._id !== postId));
     } catch (err) {
       console.error(err);
     }
-  }
+  };
 
   return (
     <div className={style.container}>
@@ -85,7 +94,12 @@ const MyPosts: React.FC = () => {
           onChange={(e) => setContent(e.target.value)}
         ></textarea>
         <div>
-          <input type="file" accept="image" onChange={(e) => setImage(e.target.files?.[0] || null)}/>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image"
+            onChange={(e) => setImage(e.target.files?.[0] || null)}
+          />
         </div>
         <div>
           <button type="submit">Добавить пост</button>
@@ -95,9 +109,18 @@ const MyPosts: React.FC = () => {
         {posts.map((post) => (
           <div className={style.post} key={post._id}>
             <div>{post.content}</div>
-            <div>{post.imageUrl && <img src={`http://localhost:5000${post.imageUrl}`} alt="Post image"/>}</div>
+            <div>
+              {post.imageUrl && (
+                <img
+                  src={`http://localhost:5000${post.imageUrl}`}
+                  alt="Post image"
+                />
+              )}
+            </div>
             <div>{post.createdAt}</div>
-            <button onClick={() => handleDeletePost(post._id)}>Удалить пост</button>
+            <button onClick={() => handleDeletePost(post._id)}>
+              Удалить пост
+            </button>
           </div>
         ))}
       </div>
