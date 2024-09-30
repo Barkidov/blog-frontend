@@ -1,8 +1,8 @@
-import { FormEvent, useState } from "react";
-import { Formik, Form, Field } from "formik";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import style from "./registerForm.module.css";
+import * as Yup from "yup";
 
 const RegisterForm: React.FC = () => {
   const navigate = useNavigate();
@@ -11,19 +11,17 @@ const RegisterForm: React.FC = () => {
     navigate("/");
   };
 
+  const validationSchema = Yup.object().shape({
+    login: Yup.string().required("Обязательно"),
+    password: Yup.string()
+      .min(4, "Пароль должен содержать минимум 4 символа")
+      .required("Обязательно"),
+  });
+
   const handleRegister = async (values: {
     login: string;
     password: string;
   }) => {
-    if (values.login.length <= 4) {
-      alert("Логин должен содержать 4 и более символов");
-      return;
-    }
-    if (values.password.length <= 4) {
-      alert("Пароль должен содержать 4 и более символов");
-      return;
-    }
-
     try {
       const response = await axios.post(
         "http://localhost:5000/api/auth/register",
@@ -58,10 +56,12 @@ const RegisterForm: React.FC = () => {
       <Formik
         initialValues={{ login: "", password: "" }}
         onSubmit={handleRegister}
+        validationSchema={validationSchema}
       >
         <Form className={style.form}>
           <div>
             <Field type="text" name="login" placeholder="Введите логин" />
+            <ErrorMessage name="login" component="div" />
           </div>
           <div>
             <Field
@@ -69,6 +69,7 @@ const RegisterForm: React.FC = () => {
               name="password"
               placeholder="Введите пароль"
             />
+            <ErrorMessage name="password" component="div" />
           </div>
           <button type="submit">Зарегистрироваться</button>
         </Form>
